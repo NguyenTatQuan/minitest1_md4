@@ -1,10 +1,17 @@
 package org.example.minitest1_md4.model;
 
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
+import org.springframework.validation.Validator;
+
 import javax.persistence.*;
 
+@Component
 @Entity
 @Table(name = "car")
-public class Car {
+
+public class Car implements Validator {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,6 +26,16 @@ public class Car {
 
 
     public Car() {
+
+    }
+
+    public Car(Long id, String code, String name, String producer, String price, Type type) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.producer = producer;
+        this.price = price;
+        this.type = type;
     }
 
     public Long getId() {
@@ -68,4 +85,27 @@ public class Car {
     public void setType(Type type) {
         this.type = type;
     }
+
+    @Override
+    public boolean supports(Class<?> clazz) {
+        return Car.class.isAssignableFrom(clazz);
+    }
+
+    @Override
+        public void validate(Object target, Errors errors) {
+            Car car = (Car) target;
+            String code = car.getCode();
+            String name = car.getName();
+            String producer = car.getProducer();
+            String price = car.getPrice();
+            Type type1 = car.getType();
+            ValidationUtils.rejectIfEmpty(errors,"code", "code.emty", "Không được bỏ trống");
+            if(!code.matches("(^CG[a-zA-Z0-9]{6}$)")){
+                errors.rejectValue("code","code.matches", "Phải có 8 kí tự và bắt đầu bằng CG.");
+            }
+            ValidationUtils.rejectIfEmpty(errors,"name", "name.emty", "Không được bỏ trống");
+            ValidationUtils.rejectIfEmpty(errors,"producer", "producer.emty", "Không được bỏ trống");
+            ValidationUtils.rejectIfEmpty(errors,"price", "price.emty", "Không được bỏ trống");
+            ValidationUtils.rejectIfEmpty(errors,"type", "type.emty", "Không được bỏ trống");
+        }
 }

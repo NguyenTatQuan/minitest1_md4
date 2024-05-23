@@ -47,7 +47,7 @@
         <td th:text="${c.getName()}"></td>
         <td th:text="${c.getProducer()}"></td>
         <td th:text="${c.getPrice()}"></td>
-        <td th:if="${c.getType() != null}" th:text="${c.getType().getName()}"></td>
+        <td th:text="${c.getType().getName()}"></td>
         <td><a th:href="@{/cars/update/{id}(id=${c.getId()})}">update</a></td>
         <td><a th:href="@{/cars/delete/{id}(id=${c.getId()})}">delete</a></td>
     </tr>

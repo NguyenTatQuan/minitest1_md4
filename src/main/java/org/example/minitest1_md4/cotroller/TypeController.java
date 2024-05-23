@@ -5,7 +5,6 @@ import org.example.minitest1_md4.model.Car;
 import org.example.minitest1_md4.model.Type;
 import org.example.minitest1_md4.service.ICarService;
 import org.example.minitest1_md4.service.ITypeService;
-import org.example.minitest1_md4.service.ITypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

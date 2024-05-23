@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -27,6 +28,13 @@ public class CarController {
     @ModelAttribute("types")
     public Iterable<Type> listTypes() {
         return typeService.findAll();
+    }
+    @GetMapping("/cars")
+    public ModelAndView listTour() {
+        ModelAndView modelAndView = new ModelAndView("list");
+        Iterable<Car> cars = carService.findAll();
+        modelAndView.addObject("cars", cars);
+        return modelAndView;
     }
 
     @GetMapping
@@ -58,10 +66,13 @@ public class CarController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute("car") Car car,
-                         RedirectAttributes redirectAttributes) {
+    public String create(@Valid @ModelAttribute("car") Car car,
+                         BindingResult bindingResult, RedirectAttributes redirect) {
+        if (bindingResult.hasErrors()) {
+            return "type/createtype";
+        }
         carService.save(car);
-        redirectAttributes.addFlashAttribute("message", "Create new car successfully");
+        redirect.addFlashAttribute("message", "Create new car successfully");
         return "redirect:/cars";
     }
 
@@ -78,10 +89,13 @@ public class CarController {
     }
 
     @PostMapping("/update/{id}")
-    public String update(@ModelAttribute("car") Car car,
-                         RedirectAttributes redirect) {
+    public String update(@Valid Car car, Model model, BindingResult bindingResult) {
+        new Car().validate(car, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return "update";
+        }
         carService.save(car);
-        redirect.addFlashAttribute("message", "Update car successfully");
+        model.addAttribute("message", "Update car successfully");
         return "redirect:/cars";
     }
 
@@ -95,4 +109,3 @@ public class CarController {
 
 
 }
-
