@@ -1,6 +1,5 @@
 package org.example.minitest1_md4.service;
 
-
 import java.util.Optional;
 
 public interface IGenerateService<T> {

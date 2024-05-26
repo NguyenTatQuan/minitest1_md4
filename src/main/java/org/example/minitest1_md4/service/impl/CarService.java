@@ -47,7 +47,7 @@ public class CarService implements ICarService {
     }
 
     @Override
-    public Page<Car> findAllByCodeContaining(Pageable pageable, String name) {
-        return iCarRepository.findAllByCodeContaining(pageable, name);
+    public Page<Car> findAllByCodeContaining(Pageable pageable, String code) {
+        return iCarRepository.findAllByCodeContaining(pageable, code);
     }
 }

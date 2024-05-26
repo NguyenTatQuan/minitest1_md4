@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head th:replace="/layout :: head">
-    <title>Create Car</title>
+    <title>Create Tour</title>
 </head>
 <body>
-<h3>Add Car</h3>
+<h3>Add Tour</h3>
 <p>
-    <a th:href="@{/cars}">
-        Back to car list
+    <a th:href="@{/car}">
+        Back to tour list
     </a>
 </p>
 <div id="form">
-    <form th:action="@{/cars/create}" th:object="${car}"
+    <form action="/create" th:object="${car}"
           method="POST" novalidate="novalidate">
         <input type="hidden" th:field="*{id}"/>
         <div>
@@ -20,26 +20,26 @@
             <p th:if="${#fields.hasErrors('code')}" th:errors="*{code}">Code Error</p>
         </div>
         <div>
-            <label for="name">Name</label>
-            <input type="text" id="name" th:field="*{name}"/>
-            <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</p>
+            <label for="name">name</label>
+            <input type="text" id="name" th:field="*{name}"/> <br>
+            <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">name Error</p>
         </div>
         <div>
-            <label for="producer">Producer</label>
-            <input type="text" id="producer" th:field="*{producer}"/>
-            <p th:if="${#fields.hasErrors('producer')}" th:errors="*{producer}">Producer Error</p>
+            <label for="idProducer">Producer ID</label>
+            <input type="text" id="idProducer" th:field="*{idProducer}"/> <br>
+            <p th:if="${#fields.hasErrors('idProducer')}" th:errors="*{idProducer}">Producer ID Error</p>
         </div>
-
+        <div>
         <div>
             <label for="price">Price</label>
-            <input type="text" id="price" th:field="*{price}"/>
+            <input type="text" id="price" th:field="*{price}" step="0.01"/> <br>
             <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}">Price Error</p>
         </div>
-        <div>
-            <label for="type">Province</label>
+            <label for="type">Type</label>
             <select id="type" th:field="*{type}">
                 <option th:each="p : ${types}" th:value="${p.id}" th:text="${p.name}"></option>
             </select>
+            <p th:if="${#fields.hasErrors('type')}" th:errors="*{type}">Type Error</p>
         </div>
         <input type="submit" value="Save"/>
     </form>

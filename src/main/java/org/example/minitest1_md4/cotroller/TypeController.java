@@ -1,81 +1,72 @@
 package org.example.minitest1_md4.cotroller;
 
-
-import org.example.minitest1_md4.model.Car;
 import org.example.minitest1_md4.model.Type;
-import org.example.minitest1_md4.service.ICarService;
 import org.example.minitest1_md4.service.ITypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
+
+
 @Controller
-@RequestMapping("/types")
 public class TypeController {
+
     @Autowired
     private ITypeService typeService;
 
-    @Autowired
-    private ICarService carService;
-
-    @GetMapping
-    public ModelAndView listType() {
-        ModelAndView modelAndView = new ModelAndView("/type/list");
+    @GetMapping("/type")
+    public String listTypes(Model model) {
         Iterable<Type> types = typeService.findAll();
-        modelAndView.addObject("types", types);
-        return modelAndView;
+        model.addAttribute("types", types);
+        return "type/listtype";
     }
 
-    @GetMapping("/create")
-    public ModelAndView createForm() {
-        ModelAndView modelAndView = new ModelAndView("/type/create");
-        modelAndView.addObject("type", new Type());
-        return modelAndView;
+    @GetMapping("/type/create")
+    public String showCreateTypeForm(Model model) {
+        model.addAttribute("type", new Type());
+        return "type/createtype";
     }
 
-    @PostMapping("/create")
-    public String create(@ModelAttribute("type") Type type,
-                         RedirectAttributes redirectAttributes) {
-        typeService.save(type);
-        redirectAttributes.addFlashAttribute("message", "Create new type successfully");
-        return "redirect:/types";
-    }
-
-    @GetMapping("/update/{id}")
-    public ModelAndView updateForm(@PathVariable Long id) {
-        Optional<Type> type = typeService.findById(id);
-        if (type.isPresent()) {
-            ModelAndView modelAndView = new ModelAndView("/type/update");
-            modelAndView.addObject("type", type.get());
-            return modelAndView;
-        } else {
-            return new ModelAndView("/error_404");
+    @PostMapping("/type/create")
+    public String createType(@Valid @ModelAttribute("type") Type type, BindingResult bindingResult, RedirectAttributes redirect) {
+        if (bindingResult.hasErrors()) {
+            return "type/createtype";
         }
-    }
-
-    @PostMapping("/update/{id}")
-    public String update(@ModelAttribute("type") Type type,
-                         RedirectAttributes redirect) {
         typeService.save(type);
-        redirect.addFlashAttribute("message", "Update type successfully");
-        return "redirect:/types";
+        redirect.addFlashAttribute("message", "Type created successfully");
+        return "redirect:/type";
     }
 
-    @GetMapping("/view-type/{id}")
-    public ModelAndView viewType(@PathVariable("id") Long id){
-        Optional<Type> typeOptional = typeService.findById(id);
-        if(!typeOptional.isPresent()){
-            return new ModelAndView("/error_404");
+    @GetMapping("/type/update/{id}")
+    public String showUpdateTypeForm(@PathVariable Long id, Model model) {
+        return typeService.findById(id)
+                .map(type -> {
+                    model.addAttribute("type", type);
+                    return "type/updatetype";
+                }).orElse("redirect:/error_404");
+    }
+
+    @PostMapping("/type/update/{id}")
+    public String updateType(@PathVariable Long id, @Valid @ModelAttribute("type") Type type, BindingResult bindingResult, RedirectAttributes redirect) {
+        if (bindingResult.hasErrors()) {
+            return "type/updatetype";
         }
+        type.setId(id);
+        typeService.save(type);
+        redirect.addFlashAttribute("message", "Type updated successfully");
+        return "redirect:/type";
+    }
 
-        Iterable<Car> cars = carService.findAllByType(typeOptional.get());
-
-        ModelAndView modelAndView = new ModelAndView("/car/list");
-        modelAndView.addObject("cars", cars);
-        return modelAndView;
+    @GetMapping("/type/delete/{id}")
+    public String deleteType(@PathVariable Long id, RedirectAttributes redirect) {
+        typeService.remove(id);
+        redirect.addFlashAttribute("message", "Type deleted successfully");
+        return "redirect:/type";
     }
 }

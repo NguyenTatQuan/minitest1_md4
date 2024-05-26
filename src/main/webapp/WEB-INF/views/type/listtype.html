@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>List Types</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding-top: 20px;
+        }
+        h3 {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+        }
+        .btn-custom {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-custom:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h3 class="text-center">List of Types</h3>
+    <div class="mb-3">
+        <a th:href="@{/type/create}" class="btn btn-custom mr-2">Create New Type</a>
+        <a th:href="@{/car}" class="btn btn-secondary">Back to Car List</a>
+    </div>
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="type : ${types}">
+            <td th:text="${type.id}"></td>
+            <td th:text="${type.name}"></td>
+            <td>
+                <a th:href="@{/type/update/{id}(id=${type.id})}" class="btn btn-warning btn-sm mr-1">Update</a>
+                <a th:href="@{/type/delete/{id}(id=${type.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this type?')">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
