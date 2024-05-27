@@ -1,14 +1,13 @@
 package org.example.minitest1_md4.cotroller;
 
 
+import org.example.minitest1_md4.exception.DuplicateCodeException;
 import org.example.minitest1_md4.model.Car;
 import org.example.minitest1_md4.model.Type;
 import org.example.minitest1_md4.service.ICarService;
 import org.example.minitest1_md4.service.ITypeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -43,7 +42,7 @@ public class CarController {
     @GetMapping("/cars/search")
     public ModelAndView search(@RequestParam("search") String search, @RequestParam(defaultValue = "0") int page) {
         ModelAndView modelAndView = new ModelAndView("list");
-        PageRequest pageable = PageRequest.of(page, 10); // 10 items per page
+        PageRequest pageable = PageRequest.of(page, 10);
         modelAndView.addObject("cars", carService.findAllByCodeContaining(pageable, search));
         modelAndView.addObject("search", search);
         return modelAndView;
@@ -53,9 +52,14 @@ public class CarController {
         model.addAttribute("car", new Car());
         return "create";
     }
+    @PostMapping("/save")
+    public String save(Car car) throws DuplicateCodeException {
+        carService.save(car);
+        return "redirect:/car";
+    }
 
     @PostMapping("/create")
-    public String checkValidation(@Valid Car car, Model model, BindingResult bindingResult) {
+    public String checkValidation(@Valid Car car, Model model, BindingResult bindingResult) throws DuplicateCodeException {
         new Car().validate(car, bindingResult);
         if (bindingResult.hasErrors()) {
             return "create";
@@ -73,12 +77,12 @@ public class CarController {
             modelAndView.addObject("car", car.get());
             return modelAndView;
         } else {
-            return new ModelAndView("/error_404");
+            return new ModelAndView("inputs-not-acceptable");
         }
     }
 
     @PostMapping("/update/{id}")
-    public String checkValidationUpdate(@Valid Car car, Model model, BindingResult bindingResult) {
+    public String checkValidationUpdate(@Valid Car car, Model model, BindingResult bindingResult)throws DuplicateCodeException {
         new Car().validate(car, bindingResult);
         if (bindingResult.hasErrors()) {
             return "update";
@@ -93,5 +97,9 @@ public class CarController {
         carService.remove(id);
         redirect.addFlashAttribute("message", "Car deleted successfully");
         return "redirect:/car";
+    }
+    @ExceptionHandler(DuplicateCodeException.class)
+    public ModelAndView showInputNotAcceptable() {
+        return new ModelAndView("/inputs-not-acceptable");
     }
 }

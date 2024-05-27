@@ -1,5 +1,6 @@
 package org.example.minitest1_md4.cotroller;
 
+import org.example.minitest1_md4.exception.DuplicateCodeException;
 import org.example.minitest1_md4.model.Type;
 import org.example.minitest1_md4.service.ITypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class TypeController {
     }
 
     @PostMapping("/type/create")
-    public String createType(@Valid @ModelAttribute("type") Type type, BindingResult bindingResult, RedirectAttributes redirect) {
+    public String createType(@Valid @ModelAttribute("type") Type type, BindingResult bindingResult, RedirectAttributes redirect) throws DuplicateCodeException {
         if (bindingResult.hasErrors()) {
             return "type/createtype";
         }
@@ -49,11 +50,11 @@ public class TypeController {
                 .map(type -> {
                     model.addAttribute("type", type);
                     return "type/updatetype";
-                }).orElse("redirect:/error_404");
+                }).orElse("redirect:/inputs-not-acceptable");
     }
 
     @PostMapping("/type/update/{id}")
-    public String updateType(@PathVariable Long id, @Valid @ModelAttribute("type") Type type, BindingResult bindingResult, RedirectAttributes redirect) {
+    public String updateType(@PathVariable Long id, @Valid @ModelAttribute("type") Type type, BindingResult bindingResult, RedirectAttributes redirect) throws DuplicateCodeException {
         if (bindingResult.hasErrors()) {
             return "type/updatetype";
         }

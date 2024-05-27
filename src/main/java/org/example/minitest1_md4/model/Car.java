@@ -14,6 +14,7 @@ public class Car implements Validator {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String code;
     private String name;
     private Double price;
@@ -93,18 +94,18 @@ public class Car implements Validator {
     public void validate(Object target, Errors errors) {
         Car car = (Car) target;
 
-        ValidationUtils.rejectIfEmpty(errors, "code", "code.empty", "Code cannot be empty");
-        ValidationUtils.rejectIfEmpty(errors, "name", "name.empty", "Destination cannot be empty");
-        ValidationUtils.rejectIfEmpty(errors, "price", "price.empty", "Price cannot be empty");
-        ValidationUtils.rejectIfEmpty(errors, "type", "type.empty", "Type cannot be empty");
-        ValidationUtils.rejectIfEmpty(errors, "idProducer", "idProducer.empty", "Producer ID cannot be empty");
+        ValidationUtils.rejectIfEmpty(errors, "code", "code.empty", "Code không được để trống");
+        ValidationUtils.rejectIfEmpty(errors, "name", "name.empty", "Name không được để trống");
+        ValidationUtils.rejectIfEmpty(errors, "price", "price.empty", "Price không được để trống");
+        ValidationUtils.rejectIfEmpty(errors, "type", "type.empty", "Type không được để trống");
+        ValidationUtils.rejectIfEmpty(errors, "idProducer", "idProducer.empty", "Producer không được để trống");
 
         if (car.getCode() != null && (!car.getCode().startsWith("CG") || car.getCode().length() != 8)) {
-            errors.rejectValue("code", "code.format", "Code must start with 'CG' and be exactly 8 characters long");
+            errors.rejectValue("code", "code.format", "Code bắt đầu bằng CG và phải có đủ 8 kí tự");
         }
 
         if (car.getPrice() != null && car.getPrice() < 0) {
-            errors.rejectValue("price", "price.invalid", "Price must be non-negative");
+            errors.rejectValue("price", "price.invalid", "Price không đc để trống và là số dương");
         }
     }
 }

@@ -1,10 +1,12 @@
 package org.example.minitest1_md4.service.impl;
 
+import org.example.minitest1_md4.exception.DuplicateCodeException;
 import org.example.minitest1_md4.model.Car;
 import org.example.minitest1_md4.model.Type;
 import org.example.minitest1_md4.repository.ICarRepository;
 import org.example.minitest1_md4.service.ICarService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,8 +24,12 @@ public class CarService implements ICarService {
     }
 
     @Override
-    public void save(Car car) {
-        iCarRepository.save(car);
+    public void save(Car car) throws DuplicateCodeException {
+        try {
+            iCarRepository.save(car);
+        } catch (DataIntegrityViolationException e) {
+            throw new DuplicateCodeException();
+        }
     }
 
     @Override
