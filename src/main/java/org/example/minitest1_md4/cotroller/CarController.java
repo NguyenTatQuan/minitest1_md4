@@ -7,7 +7,9 @@ import org.example.minitest1_md4.model.Type;
 import org.example.minitest1_md4.service.ICarService;
 import org.example.minitest1_md4.service.ITypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -40,11 +42,18 @@ public class CarController {
     }
 
     @GetMapping("/cars/search")
-    public ModelAndView search(@RequestParam("search") String search, @RequestParam(defaultValue = "0") int page) {
-        ModelAndView modelAndView = new ModelAndView("list");
-        PageRequest pageable = PageRequest.of(page, 10);
-        modelAndView.addObject("cars", carService.findAllByCodeContaining(pageable, search));
-        modelAndView.addObject("search", search);
+    public ModelAndView listTourSearch(@RequestParam("search") Optional<String> search, Pageable pageable) throws DuplicateCodeException {
+        Page<Car> cars;
+        if (search.isPresent()) {
+            cars = carService.findAllByCodeContaining(pageable, search.get());
+            if (!cars.hasContent()) {
+                throw new DuplicateCodeException();
+            }
+        } else {
+            cars = carService.findAll(pageable);
+        }
+        ModelAndView modelAndView = new ModelAndView("/list");
+        modelAndView.addObject("cars", cars);
         return modelAndView;
     }
     @GetMapping("/create")
